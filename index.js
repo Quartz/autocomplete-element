@@ -5,20 +5,20 @@ module.exports = Auto;
 function Auto (elem, fn) {
     if (!(this instanceof Auto)) return new Auto(elem, fn);
     var self = this;
-    
+
     var div = document.createElement('div');
     div.style.display = 'inline-block';
     div.style.position = 'relative';
     div.style.width = elem.clientWidth;
     div.style.verticalAlign = 'top';
-    
+
     var istyle = window.getComputedStyle(elem);
     if (elem.parentNode) {
         elem.parentNode.insertBefore(div, elem);
         elem.parentNode.removeChild(elem);
         div.appendChild(elem);
     }
-    
+
     this.element = div;
     this.input = elem;
     this.input.setAttribute('autocomplete', 'off');
@@ -28,7 +28,7 @@ function Auto (elem, fn) {
     this.ahead.setAttribute('disabled', true);
     this.ahead.style.backgroundColor = istyle.backgroundColor;
     this.options = [];
-    
+
     css(this.ahead, {
         color: '#808080',
         position: 'absolute',
@@ -41,24 +41,20 @@ function Auto (elem, fn) {
         zIndex: 10
     });
     div.appendChild(this.ahead);
-    
+
     this.box = document.createElement('div');
+    this.box.className = 'autocomplete-options-list';
+
     css(this.box, {
         display: 'none',
         position: 'absolute',
         top: istyle.height,
-        width: parseInt(istyle.width) - parseInt(istyle.paddingRight) * 2,
-        maxHeight: '5em',
+        width: istyle.width,
         overflowY: 'auto',
-        backgroundColor: 'white',
-        color: 'black',
-        borderRadius: '3px',
         paddingLeft: istyle.paddingLeft,
         paddingRight: istyle.paddingRight,
-        paddingTop: '3px',
-        paddingBottom: '3px'
-        
     });
+
     var prev;
     this.box.addEventListener('mousemove', function (ev) {
         unhover();
@@ -71,20 +67,17 @@ function Auto (elem, fn) {
         self.suggest();
     });
     this.box.addEventListener('mouseout', unhover);
-    
+
     function hover (elem) {
-        elem.style.backgroundColor = 'blue';
-        elem.style.color = 'white';
-        prev = elem;
+      elem.classList.add('autocomplete-focus-option');
     }
     function unhover (ev) {
         if (prev) {
-            prev.style.backgroundColor = 'inherit';
-            prev.style.color = 'inherit';
+          prev.classList.remove('autocomplete-focus-option');
         }
     }
     div.appendChild(this.box);
-    
+
     this.input.addEventListener('keydown', function (ev) {
         if (ev.which === 9 || ev.keyCode === 9) {
             self.set(self.options[0]);
@@ -122,7 +115,7 @@ function Auto (elem, fn) {
         }
         realign();
     });
-    
+
     realign();
     this.input.addEventListener('focus', function () {
         if (self.options.length) {
@@ -142,7 +135,7 @@ function Auto (elem, fn) {
         realign();
         setTimeout(realign, 0);
     });
-    
+
     var previnput;
     this.input.addEventListener('keyup', function (ev) {
         if (ev.which === 9 || ev.keyCode === 9
@@ -155,7 +148,7 @@ function Auto (elem, fn) {
             if (fn) fn.call(self, self, ev);
         }
     });
-    
+
     function realign () {
         var istyle = window.getComputedStyle(self.input);
         self.ahead.style.textAlign = istyle.textAlign;
@@ -171,14 +164,14 @@ Auto.prototype.suggest = function (sgs) {
     if (!sgs) sgs = [ '' ];
     else if (!isarray(sgs)) sgs = [ sgs ].filter(Boolean);
     this.options = sgs;
-    
+
     if (!sgs[0]) this.ahead.value = '';
     else this.ahead.value = this.input.value
         + (sgs[0] || '').slice(this.input.value.length)
     ;
     if (sgs.length <= 1) return css(this.box, { display: 'none' });;
     this.box.innerHTML = '';
-    
+
     css(this.box, { display: 'block' });
     for (var i = 0; i < sgs.length; i++) {
         var div = document.createElement('div');
