@@ -5,7 +5,7 @@ module.exports = Auto;
 var classNames = {
   input: 'autocomplete-input',
   typeahead: 'autocomplete-typeahead',
-  optionList: 'autocomplete-options-list',
+  optionsList: 'autocomplete-options-list',
   focusOptions: 'autocomplete-focus-option'
 };
 
