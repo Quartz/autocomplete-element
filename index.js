@@ -43,10 +43,10 @@ function Auto (elem, fn) {
 
     css(this.ahead, {
         position: 'absolute',
+        border: istyle.border,
         zIndex: 5
     });
     css(this.input, {
-        borderColor: 'transparent',
         backgroundColor: 'transparent',
         position: 'absolute',
         zIndex: 10
@@ -81,6 +81,7 @@ function Auto (elem, fn) {
 
     function hover (elem) {
       elem.classList.add(classNames.focusOptions);
+      prev = elem;
     }
     function unhover (ev) {
       if (prev) {
