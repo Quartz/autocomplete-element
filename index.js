@@ -2,6 +2,13 @@ var isarray = require('isarray');
 
 module.exports = Auto;
 
+var classNames = {
+  input: 'autocomplete-input',
+  typeahead: 'autocomplete-typeahead',
+  optionList: 'autocomplete-options-list',
+  focusOptions: 'autocomplete-focus-option'
+};
+
 function Auto (elem, fn) {
     if (!(this instanceof Auto)) return new Auto(elem, fn);
     var self = this;
@@ -20,17 +27,21 @@ function Auto (elem, fn) {
     }
 
     this.element = div;
+
     this.input = elem;
     this.input.setAttribute('autocomplete', 'off');
     this.input.setAttribute('spellcheck', 'false');
+    this.input.className = classNames.input;
+
     this.ahead = elem.cloneNode(true);
     this.ahead.setAttribute('placeholder', '');
     this.ahead.setAttribute('disabled', true);
+    this.ahead.className = classNames.typeahead;
+
     this.ahead.style.backgroundColor = istyle.backgroundColor;
     this.options = [];
 
     css(this.ahead, {
-        color: '#808080',
         position: 'absolute',
         zIndex: 5
     });
@@ -43,7 +54,7 @@ function Auto (elem, fn) {
     div.appendChild(this.ahead);
 
     this.box = document.createElement('div');
-    this.box.className = 'autocomplete-options-list';
+    this.box.className = classNames.optionsList;
 
     css(this.box, {
         display: 'none',
@@ -69,12 +80,12 @@ function Auto (elem, fn) {
     this.box.addEventListener('mouseout', unhover);
 
     function hover (elem) {
-      elem.classList.add('autocomplete-focus-option');
+      elem.classList.add(classNames.focusOptions);
     }
     function unhover (ev) {
-        if (prev) {
-          prev.classList.remove('autocomplete-focus-option');
-        }
+      if (prev) {
+        prev.classList.remove(classNames.focusOptions);
+      }
     }
     div.appendChild(this.box);
 
