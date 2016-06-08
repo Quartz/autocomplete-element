@@ -9,8 +9,8 @@ var classNames = {
   focusOptions: 'autocomplete-focus-option'
 };
 
-function Auto (elem, fn) {
-    if (!(this instanceof Auto)) return new Auto(elem, fn);
+function Auto (elem, fn, onSet) {
+    if (!(this instanceof Auto)) return new Auto(elem, fn, onSet);
     var self = this;
 
     var div = document.createElement('div');
@@ -92,7 +92,7 @@ function Auto (elem, fn) {
 
     this.input.addEventListener('keydown', function (ev) {
         if (ev.which === 9 || ev.keyCode === 9) {
-            self.set(self.options[0]);
+            self.set(self.options[0], onSet);
             self.options.splice(1);
             css(self.box, { display: 'none' });
             self.box.innerHTML = '';
@@ -105,7 +105,7 @@ function Auto (elem, fn) {
             if (prev) ix = self.options.indexOf(prev.textContent);
             var len = self.box.children.length;
             prev = self.box.children[(ix - 1 + len) % len];
-            self.set(prev.textContent);
+            self.set(prev.textContent, onSet);
             hover(prev);
         }
         else if (ev.which === 40 || ev.keyCode === 40) { // down
@@ -114,7 +114,7 @@ function Auto (elem, fn) {
             var ix = -1;
             if (prev) ix = self.options.indexOf(prev.textContent);
             prev = self.box.children[(ix + 1) % self.box.children.length];
-            self.set(prev.textContent);
+            self.set(prev.textContent, onSet);
             hover(prev);
         }
         else if ((ev.which === 10 || ev.which === 13
@@ -167,9 +167,10 @@ function Auto (elem, fn) {
     }
 }
 
-Auto.prototype.set = function (txt) {
+Auto.prototype.set = function (txt, onSet) {
     this.input.value = txt;
     this.ahead.value = txt;
+    if (onSet) onSet(txt);
 };
 
 Auto.prototype.suggest = function (sgs) {
